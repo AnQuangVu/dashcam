@@ -1,0 +1,2 @@
+-keep class org.videolan.libvlc.** { *; }
+-keep class xyz.justsoft.video_thumbnail.** { *; }
