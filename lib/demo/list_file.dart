@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:dashcam/index.dart';
-import 'package:dashcam_demo/demo/view.dart';
 import 'package:dashcam_demo/utils/configs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
@@ -49,20 +48,12 @@ class _ListFileInfoUIState extends State<ListFileInfoUI> {
     }
   }
 
-  checkSize() async {
-    File file = File(
-      "/storage/emulated/0/Android/data/com.example.dashcam_demo/files/GoPlusCam/Thumbnail/Thumbnail_PICT2710.jpg",
-    );
-    int size = await file.length();
-    print("sizeeee $size");
-  }
-
   @override
   Widget build(BuildContext context) {
     //if (infors == null) return Center(child: CircularProgressIndicator());
     return WillPopScope(
       onWillPop: () async {
-        await dashcam.finishPlayBackFile();
+        await dashcam.finishPlayBackFileList();
         return true;
       },
       child: Scaffold(
@@ -75,23 +66,20 @@ class _ListFileInfoUIState extends State<ListFileInfoUI> {
                   child: Column(
                     children: [
                       ...snapshot.data!
-                          .sublist(0, 4)
+                          .sublist(0, 20)
                           .map(
                             (e) => InkWell(
                               onTap: () async {
+                                await dashcam.finishPlayBackFileList();
                                 int index =
                                     snapshot.data!.indexWhere((element) => element['FileTime'] == e['FileTime']);
-                                print("fewfewfewwwwwwwww$index");
+                                await dashcam.setModeStreaming(2);
+                                await dashcam.startStream();
                                 await dashcam.playBackFile(index);
                                 //await dashcam.downloadFileByIndex(0);
                                 //await dashcam.deleteFileByIndex(0);
                                 // ignore: use_build_context_synchronously
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => StreamingPage(),
-                                  ),
-                                );
+                                Navigator.pop(context);
                               },
                               child: FileItem(
                                 infor: e,

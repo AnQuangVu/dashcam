@@ -28,12 +28,14 @@ class _StreamingPageState extends State<StreamingPage> {
   }
 
   onTapButtonPlay() async {
+    //dashcam.finishPlayBackFile();
     setState(() {
       isPlaying = !isPlaying;
     });
     if (isPlaying) {
       // nhớ pause playback-> finish playback -> start stream mới xem lại xem cũ
       dashcam.stopStream();
+      //dashcam.finishPlayBackFile();
       //dashcam.pauseStream();
     } else {
       //dashcam.stopPlayBackFile();
