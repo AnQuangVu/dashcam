@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:dashcam/index.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/configs.dart';
 import 'list_file.dart';
+import 'setting.dart';
 
 class StreamingPage extends StatefulWidget {
   @override
@@ -116,6 +119,25 @@ class _StreamingPageState extends State<StreamingPage> {
                         decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
                         child: Icon(
                           mode == Configs.GPDEVICEMODE_Capture ? Icons.image : Icons.video_call,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        // ignore: use_build_context_synchronously
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SettingUI(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                        child: const Icon(
+                          Icons.settings,
                           size: 30,
                         ),
                       ),

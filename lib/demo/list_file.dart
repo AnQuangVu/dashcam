@@ -18,7 +18,8 @@ class _ListFileInfoUIState extends State<ListFileInfoUI> {
   List<dynamic>? infors;
   @override
   void initState() {
-    initData();
+    //initData();
+    dashcam.getFileRecordInfos();
     super.initState();
   }
 
