@@ -18,16 +18,38 @@ class _StreamingPageState extends State<StreamingPage> {
   bool isLoading = true;
   bool isRecording = false;
   int mode = Configs.GPDEVICEMODE_Record;
+  int statusSDCard = 0;
+  Map? resultSetting;
   @override
   void initState() {
-    dashcam.startStream();
+    dashcam.startSetting();
+    initData();
     super.initState();
+  }
+
+  initData() async {
+    await Future.delayed(const Duration(milliseconds: 500), () async {
+      resultSetting = await dashcam.startSetting();
+      print("uhmmmmmmmm $resultSetting");
+      dashcam.startSetting();
+    });
   }
 
   @override
   void dispose() {
     dashcam.finishStream();
     super.dispose();
+  }
+
+  Stream<int> getStatusSD() async* {
+    int? status = 0;
+    await Future.delayed(const Duration(milliseconds: 500), () async {
+      status = await dashcam.getCameraStatus();
+    });
+    if (status != statusSDCard) {
+      print("status: $status");
+      yield status ?? 0;
+    }
   }
 
   onTapButtonPlay() async {
@@ -66,7 +88,7 @@ class _StreamingPageState extends State<StreamingPage> {
               child: AndroidView(
                 viewType: 'dash_cam',
                 onPlatformViewCreated: (id) {
-                  dashcam.startStream();
+                  //dashcam.startStream();
                 },
               ),
             ),
@@ -89,8 +111,10 @@ class _StreamingPageState extends State<StreamingPage> {
                       ),
                     ),
                     InkWell(
-                      onTap: () {
-                        dashcam.record();
+                      onTap: () async {
+                        await dashcam.record();
+                        int? status = await dashcam.getCameraStatus();
+                        print("dddenfjlwenfwuj $status");
                         setState(() {
                           isRecording = !isRecording;
                         });

@@ -71,7 +71,7 @@ class _ListFileInfoUIState extends State<ListFileInfoUI> {
                           .map(
                             (e) => InkWell(
                               onTap: () async {
-                                await dashcam.finishPlayBackFileList();
+                                // await dashcam.finishPlayBackFileList();
                                 int index =
                                     snapshot.data!.indexWhere((element) => element['FileTime'] == e['FileTime']);
                                 await dashcam.setModeStreaming(2);
