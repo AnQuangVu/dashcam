@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dashcam/index.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -17,6 +19,10 @@ class _SettingUIState extends State<SettingUI> {
   void initState() {
     dashcam.startSetting();
     super.initState();
+  }
+
+  initData() async {
+    Map? resultSetting = await dashcam.startSetting();
   }
 
   @override

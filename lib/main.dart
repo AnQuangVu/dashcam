@@ -2,7 +2,6 @@ import 'package:dashcam_demo/utils/configs.dart';
 import 'package:flutter/material.dart';
 import 'package:dashcam/index.dart';
 
-import 'demo/list_file.dart';
 import 'demo/view.dart';
 
 void main() {
@@ -71,6 +70,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   testGetPlatform() async {
     await dashcamPlatform.connectToDevice(Configs.COMMAND_URL, Configs.COMMAND_PORT);
+    int? status = await dashcamPlatform.sendGetStatus();
+    print('status: $status');
   }
 
   void _incrementCounter() {

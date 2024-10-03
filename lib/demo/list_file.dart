@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:dashcam/index.dart';
 import 'package:dashcam_demo/utils/configs.dart';
+import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
+import 'package:ffmpeg_kit_flutter/log.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 import 'package:gap/gap.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -19,8 +20,21 @@ class _ListFileInfoUIState extends State<ListFileInfoUI> {
   @override
   void initState() {
     //initData();
-    dashcam.getFileRecordInfos();
+    init();
     super.initState();
+  }
+
+  init() async {
+    infors = await dashcam.getFileRecordInfos();
+    int? percent = 0;
+    await Future.delayed(const Duration(milliseconds: 2000), () async {
+    });
+    while ((percent ?? 0) < 100) {
+      await Future.delayed(const Duration(milliseconds: 500), () async {
+        percent = await dashcam.downloadFileByIndex(1);
+        print("percent: $percent");
+      });
+    }
   }
 
   Stream<List<dynamic>> initData() async* {
@@ -49,6 +63,17 @@ class _ListFileInfoUIState extends State<ListFileInfoUI> {
     }
   }
 
+  Stream<int> downloadFile(int index) async* {
+    int? result = 0;
+    await Future.delayed(const Duration(milliseconds: 50), () async {
+      result = await dashcam.downloadFileByIndex(index);
+      print("gggggggggg $result");
+    });
+    if (result != 0) {
+      yield result ?? 0;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     //if (infors == null) return Center(child: CircularProgressIndicator());
@@ -70,17 +95,19 @@ class _ListFileInfoUIState extends State<ListFileInfoUI> {
                           .sublist(0, 20)
                           .map(
                             (e) => InkWell(
-                              onTap: () async {
+                              onTap: () {
                                 // await dashcam.finishPlayBackFileList();
-                                int index =
-                                    snapshot.data!.indexWhere((element) => element['FileTime'] == e['FileTime']);
-                                await dashcam.setModeStreaming(2);
-                                await dashcam.startStream();
-                                await dashcam.playBackFile(index);
+                                ///playvideo
+                                // int index =
+                                //     snapshot.data!.indexWhere((element) => element['FileTime'] == e['FileTime']);
+                                // await dashcam.setModeStreaming(2);
+                                // await dashcam.startStream();
+                                // await dashcam.playBackFile(index);
+                                ///playvideo
                                 //await dashcam.downloadFileByIndex(0);
                                 //await dashcam.deleteFileByIndex(0);
                                 // ignore: use_build_context_synchronously
-                                Navigator.pop(context);
+                                // Navigator.pop(context);
                               },
                               child: FileItem(
                                 infor: e,
@@ -109,18 +136,18 @@ class FileItem extends StatefulWidget {
 }
 
 class _FileItem extends State<FileItem> {
-  final FlutterFFmpeg _flutterFFmpeg = FlutterFFmpeg();
+  final FFmpegKit _flutterFFmpeg = FFmpegKit();
   String? _thumbnailPath;
   String videoPath = '';
   int fileSize = 0;
-  String duration = '';
+  int date = 0;
   String? fileName = '';
   @override
   void initState() {
     super.initState();
     videoPath = widget.infor['ThumbnailFilePath'];
     fileSize = widget.infor['FileSize'];
-    duration = widget.infor['FileTime'];
+    date = widget.infor['FileTime'];
     fileName = widget.infor['FileName'];
     if (videoPath != "Unknown") {
       _generateThumbnail();
@@ -143,7 +170,7 @@ class _FileItem extends State<FileItem> {
       }
       // Lấy thư mục tạm để lưu thumbnail
       final String dir = (await getTemporaryDirectory()).path;
-      final String thumbnailPath = '$dir/$duration.png';
+      final String thumbnailPath = '$dir/$date.png';
       File file = File(thumbnailPath);
       bool exitFile = await file.existsSync();
       if (exitFile) {
@@ -166,17 +193,7 @@ class _FileItem extends State<FileItem> {
       //   } else {
       //   }
       // });
-      while (maxRequest > 0) {
-        int result = await _flutterFFmpeg.execute(ffmpegCommand);
-        if (result == 0) {
-          setState(() {
-            _thumbnailPath = thumbnailPath;
-          });
-          break;
-        } else {
-          maxRequest--;
-        }
-      }
+      await FFmpegKit.execute(ffmpegCommand).then((session) async {});
     } catch (e) {
       print("Error generating thumbnail: $e");
     }
@@ -214,7 +231,7 @@ class _FileItem extends State<FileItem> {
         ),
         const Gap(4),
         Text(
-          'Duration: $duration',
+          'Duration: $date',
           style: const TextStyle(fontSize: 14),
         )
       ],

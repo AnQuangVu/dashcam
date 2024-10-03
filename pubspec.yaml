@@ -36,7 +36,7 @@ dependencies:
   fijkplayer: ^0.11.0
   cupertino_icons: ^1.0.2
   path_provider: any
-  flutter_ffmpeg: ^0.4.2
+  ffmpeg_kit_flutter: 6.0.3-LTS
   gap: any
 
 dev_dependencies:

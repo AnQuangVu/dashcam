@@ -28,9 +28,7 @@ class _StreamingPageState extends State<StreamingPage> {
   }
 
   initData() async {
-    await Future.delayed(const Duration(milliseconds: 500), () async {
-      resultSetting = await dashcam.startSetting();
-      print("uhmmmmmmmm $resultSetting");
+    await Future.delayed(const Duration(milliseconds: 1000), () async {
       dashcam.startSetting();
     });
   }
@@ -114,7 +112,6 @@ class _StreamingPageState extends State<StreamingPage> {
                       onTap: () async {
                         await dashcam.record();
                         int? status = await dashcam.getCameraStatus();
-                        print("dddenfjlwenfwuj $status");
                         setState(() {
                           isRecording = !isRecording;
                         });
